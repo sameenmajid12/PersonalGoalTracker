@@ -8,20 +8,40 @@ import {
   TextInput,
   Switch,
 } from "react-native";
+import { saveGoal } from "../storage/storage";
 import colors from "../colors";
 const CreateTodoScreen = () => {
   const [type, setType] = useState("goal");
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState(null);
-  const [time, setTime] = useState(null);
-  const [date, setDate] = useState(null);
-  const [repeat, setRepeat] = useState(null);
+  const [description, setDescription] = useState("");
+  const [time, setTime] = useState({ enabled: false, data: null });
+  const [date, setDate] = useState({ enabled: false, data: null });
+  const [repeat, setRepeat] = useState({ enabled: false, data: null });
+  const toggleOption = (setter) => {
+    setter((prev) => ({ ...prev, enabled: !prev.enabled }));
+  };
   const changeType = (t) => {
     if (t.toLowerCase() !== "goal" && t.toLowerCase() !== "reminder") {
       return;
     }
     setType(t);
   };
+  const save=()=>{
+    const goal = {
+      title:title,
+      description:description,
+      time:time.data,
+      date:date.data,
+      repeat:repeat.data
+    };
+    
+    saveGoal(goal);
+    setTitle("");
+    setDescription("");
+    setTime({enabled:false,data:null});
+    setDate({enabled:false,data:null});
+    setRepeat({enabled:false, data:null});
+  }
   return (
     <SafeAreaView style={styles.createScreen}>
       <View style={styles.createHeaderContainer}>
@@ -88,7 +108,7 @@ const CreateTodoScreen = () => {
             style={styles.createInput}
           />
         </View>
-        <View >
+        <View>
           <Text style={styles.createInputHeader}>Details (Optional)</Text>
           <View style={styles.createOptionsContainer}>
             <View
@@ -99,6 +119,9 @@ const CreateTodoScreen = () => {
             >
               <Text style={styles.createOptionText}>Date</Text>
               <Switch
+                value={date.enabled}
+                onValueChange={() => toggleOption(setDate)}
+                trackColor={{ true: colors.secondary }}
                 style={{
                   transform: [{ scaleY: 0.9 }, { scaleX: 0.95 }],
                 }}
@@ -112,6 +135,9 @@ const CreateTodoScreen = () => {
             >
               <Text style={styles.createOptionText}>Time</Text>
               <Switch
+                value={time.enabled}
+                onValueChange={() => toggleOption(setTime)}
+                trackColor={{ true: colors.secondary }}
                 style={{
                   transform: [{ scaleY: 0.9 }, { scaleX: 0.95 }],
                 }}
@@ -120,6 +146,9 @@ const CreateTodoScreen = () => {
             <View style={styles.createOption}>
               <Text style={styles.createOptionText}>Repeat</Text>
               <Switch
+                value={repeat.enabled}
+                onValueChange={() => toggleOption(setRepeat)}
+                trackColor={{ true: colors.secondary }}
                 style={{
                   transform: [{ scaleY: 0.9 }, { scaleX: 0.95 }],
                 }}
