@@ -1,15 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   StyleSheet,
   View,
   Text,
   Pressable,
-  TextInput,
-  Switch,
 } from "react-native";
-import { saveGoal } from "../storage/storage";
 import colors from "../colors";
+import CreateTodoInputs from "../components/CreateTodoInputs";
+import { GoalContext } from "../GoalContext";
 const CreateTodoScreen = () => {
   const [type, setType] = useState("goal");
   const [title, setTitle] = useState("");
@@ -17,6 +16,7 @@ const CreateTodoScreen = () => {
   const [time, setTime] = useState({ enabled: false, data: null });
   const [date, setDate] = useState({ enabled: false, data: null });
   const [repeat, setRepeat] = useState({ enabled: false, data: null });
+  const {addGoal} = useContext(GoalContext)
   const toggleOption = (setter) => {
     setter((prev) => ({ ...prev, enabled: !prev.enabled }));
   };
@@ -26,22 +26,26 @@ const CreateTodoScreen = () => {
     }
     setType(t);
   };
-  const save=()=>{
+  const save = () => {
+    if(!title.trim()) return;
+    const id = Math.random().toString(36).substring(2, 9);
     const goal = {
-      title:title,
-      description:description,
-      time:time.data,
-      date:date.data,
-      repeat:repeat.data
+      id: id,
+      title: title,
+      description: description,
+      time: time.data,
+      date: date.data,
+      repeat: repeat.data,
+      type: type,
     };
-    
-    saveGoal(goal);
+    addGoal(goal);
     setTitle("");
     setDescription("");
-    setTime({enabled:false,data:null});
-    setDate({enabled:false,data:null});
-    setRepeat({enabled:false, data:null});
-  }
+    setTime({ enabled: false, data: null });
+    setDate({ enabled: false, data: null });
+    setRepeat({ enabled: false, data: null });
+    setType("goal");
+  };
   return (
     <SafeAreaView style={styles.createScreen}>
       <View style={styles.createHeaderContainer}>
@@ -63,8 +67,8 @@ const CreateTodoScreen = () => {
             <Text
               style={
                 type === "goal"
-                  ? { color: "white", fontWeight: 500 }
-                  : { color: colors.accent, fontWeight: 400 }
+                  ? { color: "white", fontWeight: "500" }
+                  : { color: colors.accent, fontWeight: "400" }
               }
             >
               Goal
@@ -86,8 +90,8 @@ const CreateTodoScreen = () => {
             <Text
               style={
                 type === "reminder"
-                  ? { color: "white", fontWeight: 500 }
-                  : { color: colors.accent, fontWeight: 400 }
+                  ? { color: "white", fontWeight: "500" }
+                  : { color: colors.accent, fontWeight: "400" }
               }
             >
               Reminder
@@ -96,69 +100,21 @@ const CreateTodoScreen = () => {
         </View>
       </View>
       <View style={styles.break} />
-      <View style={styles.createInputsContainer}>
-        <View style={styles.createInputContainer}>
-          <Text style={styles.createInputHeader}>Title</Text>
-          <TextInput placeholder="Enter Title" style={styles.createInput} />
-        </View>
-        <View style={styles.createInputContainer}>
-          <Text style={styles.createInputHeader}>Description</Text>
-          <TextInput
-            placeholder="Enter Description (Optional)"
-            style={styles.createInput}
-          />
-        </View>
-        <View>
-          <Text style={styles.createInputHeader}>Details (Optional)</Text>
-          <View style={styles.createOptionsContainer}>
-            <View
-              style={[
-                styles.createOption,
-                { borderBottomWidth: 1, borderBottomColor: "rgba(0,0,0,0.15)" },
-              ]}
-            >
-              <Text style={styles.createOptionText}>Date</Text>
-              <Switch
-                value={date.enabled}
-                onValueChange={() => toggleOption(setDate)}
-                trackColor={{ true: colors.secondary }}
-                style={{
-                  transform: [{ scaleY: 0.9 }, { scaleX: 0.95 }],
-                }}
-              />
-            </View>
-            <View
-              style={[
-                styles.createOption,
-                { borderBottomWidth: 1, borderBottomColor: "rgba(0,0,0,0.15)" },
-              ]}
-            >
-              <Text style={styles.createOptionText}>Time</Text>
-              <Switch
-                value={time.enabled}
-                onValueChange={() => toggleOption(setTime)}
-                trackColor={{ true: colors.secondary }}
-                style={{
-                  transform: [{ scaleY: 0.9 }, { scaleX: 0.95 }],
-                }}
-              />
-            </View>
-            <View style={styles.createOption}>
-              <Text style={styles.createOptionText}>Repeat</Text>
-              <Switch
-                value={repeat.enabled}
-                onValueChange={() => toggleOption(setRepeat)}
-                trackColor={{ true: colors.secondary }}
-                style={{
-                  transform: [{ scaleY: 0.9 }, { scaleX: 0.95 }],
-                }}
-              />
-            </View>
-          </View>
-        </View>
-      </View>
+      <CreateTodoInputs
+        time={time}
+        setTime={setTime}
+        date={date}
+        setDate={setDate}
+        repeat={repeat}
+        setRepeat={setRepeat}
+        toggleOption={toggleOption}
+        title={title}
+        setTitle={setTitle}
+        setDescription={setDescription}
+        description={description}
+      />
       <View style={styles.saveButtonContainer}>
-        <Pressable style={styles.saveButton}>
+        <Pressable onPress={save} style={styles.saveButton}>
           <Text style={styles.saveButtonText}>Save</Text>
         </Pressable>
       </View>
@@ -178,7 +134,7 @@ const styles = StyleSheet.create({
   createHeader: {
     color: colors.text,
     fontSize: 30,
-    fontWeight: 600,
+    fontWeight: "600",
   },
   createButtonsContainer: {
     flexDirection: "row",
@@ -195,40 +151,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "rgba(0,0,0,0.25)",
   },
-  createInputsContainer: {
-    rowGap: 15,
-  },
-  createInputContainer: {
-    rowGap: 0,
-  },
-  createInputHeader: {
-    color: "rgba(0,0,0,0.35)",
-  },
-  createInput: {
-    width: "auto",
-    height: 45,
-    borderColor: "rgba(0,0,0,0.2)",
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    color: colors.text,
-  },
-  createOptionsContainer: {
-    borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.2)",
-    borderRadius: 10,
-  },
-  createOption: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  createOptionText: {
-    color: colors.secondaryText,
-    fontSize: 14,
-  },
   saveButtonContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
@@ -243,7 +165,7 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     color: "white",
-    fontWeight: 500,
+    fontWeight: "500",
   },
 });
 export default CreateTodoScreen;
