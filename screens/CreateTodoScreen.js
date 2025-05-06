@@ -37,6 +37,7 @@ const CreateTodoScreen = () => {
       date: date.data ? date.data : new Date(),
       repeat: repeat.data,
       type: type,
+      completed:false
     };
     addGoal(goal);
     setTitle("");
