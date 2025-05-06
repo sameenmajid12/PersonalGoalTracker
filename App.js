@@ -4,12 +4,10 @@ import HomeScreen from "./screens/HomeScreen";
 import TodoDetailScreen from "./screens/TodoDetailScreen";
 import CreateTodoScreen from "./screens/CreateTodoScreen";
 import { useState } from "react";
-import { Provider as PaperProvider } from "react-native-paper";
 import { GoalProvider } from "./GoalContext";
 const Stack = createNativeStackNavigator();
 export default function App() {
   return (
-    <PaperProvider>
       <GoalProvider>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -19,6 +17,5 @@ export default function App() {
           </Stack.Navigator>
         </NavigationContainer>
       </GoalProvider>
-    </PaperProvider>
   );
 }
