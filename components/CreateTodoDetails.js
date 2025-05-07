@@ -4,13 +4,12 @@ import DatePicker from "./DatePicker";
 import TimePicker from "./TimePicker";
 import RepeatPicker from "./RepeatPicker";
 const CreateTodoDetails = ({
-  time,
-  setTime,
-  date,
-  setDate,
+  dateTime,
+  setDateTime,
   repeat,
   setRepeat,
-  toggleOption,
+  toggleDateTime,
+  toggleRepeat
 }) => {
   return (
     <View style={styles.createOptionsContainer}>
@@ -23,15 +22,15 @@ const CreateTodoDetails = ({
                 <View style={styles.createOptionTitle}>
         <Text style={styles.createOptionText}>Date</Text>
         <Switch
-          value={date.enabled}
-          onValueChange={() => toggleOption(setDate)}
+          value={dateTime.dateEnabled}
+          onValueChange={() => toggleDateTime("date")}
           trackColor={{ true: colors.secondary }}
           style={{
             transform: [{ scaleY: 0.9 }, { scaleX: 0.95 }],
           }}
         />
         </View>
-        {date.enabled && <DatePicker date={date} setDate={setDate} />}
+        {dateTime.dateEnabled && <DatePicker dateTime={dateTime} setDateTime={setDateTime} />}
       </View>
       <View
         style={[
@@ -42,8 +41,8 @@ const CreateTodoDetails = ({
         <View style={styles.createOptionTitle}>
           <Text style={styles.createOptionText}>Time</Text>
           <Switch
-            value={time.enabled}
-            onValueChange={() => toggleOption(setTime)}
+            value={dateTime.timeEnabled}
+            onValueChange={() => toggleDateTime("time")}
             trackColor={{ true: colors.secondary }}
             style={{
               transform: [{ scaleY: 0.9 }, { scaleX: 0.95 }],
@@ -51,14 +50,14 @@ const CreateTodoDetails = ({
           />
         </View>
 
-        {time.enabled && <TimePicker time={time} setTime={setTime} />}
+        {dateTime.timeEnabled && <TimePicker dateTime={dateTime} setDateTime={setDateTime} />}
       </View>
       <View style={styles.createOption}>
         <View style={styles.createOptionTitle}>
           <Text style={styles.createOptionText}>Repeat</Text>
           <Switch
             value={repeat.enabled}
-            onValueChange={() => toggleOption(setRepeat)}
+            onValueChange={() => toggleRepeat()}
             trackColor={{ true: colors.secondary }}
             style={{
               transform: [{ scaleY: 0.9 }, { scaleX: 0.95 }],

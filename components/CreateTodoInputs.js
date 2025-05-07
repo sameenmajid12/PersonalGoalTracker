@@ -6,13 +6,12 @@ const CreateTodoInputs = ({
   setTitle,
   setDescription,
   description,
-  date,
-  time,
   repeat,
-  setDate,
   setRepeat,
-  setTime,
-  toggleOption,
+  toggleRepeat,
+  toggleDateTime,
+  dateTime, 
+  setDateTime
 }) => {
   return (
     <View style={styles.createInputsContainer}>
@@ -39,13 +38,12 @@ const CreateTodoInputs = ({
       <View>
         <Text style={styles.createInputHeader}>Details (Optional)</Text>
         <CreateTodoDetails
-          time={time}
-          setTime={setTime}
-          date={date}
-          setDate={setDate}
+        toggleRepeat={toggleRepeat}
+          dateTime={dateTime}
+          setDateTime={setDateTime}
           repeat={repeat}
           setRepeat={setRepeat}
-          toggleOption={toggleOption}
+          toggleDateTime={toggleDateTime}
         />
       </View>
     </View>

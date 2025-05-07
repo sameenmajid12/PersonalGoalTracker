@@ -8,17 +8,22 @@ const CreateTodoScreen = () => {
   const [type, setType] = useState("goal");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [time, setTime] = useState({
-    enabled: false,
-    hours: null,
-    minutes: null,
-    AMPM: "",
-  });
-  const [date, setDate] = useState({ enabled: false, data: null });
+  const [dateTime, setDateTime] = useState({timeEnabled:false, dateEnabled:false, year:null, month:null, day:null, hour:null, minutes:null, AMPM:""});
   const [repeat, setRepeat] = useState({ enabled: false, data: null });
   const { addGoal } = useContext(GoalContext);
-  const toggleOption = (setter) => {
-    setter((prev) => ({ ...prev, enabled: !prev.enabled }));
+  const toggleDateTime=(dateOrTime)=>{
+    if(dateOrTime==="time"){
+      setDateTime((prev)=>({...prev, timeEnabled:!prev.timeEnabled}));
+    }
+    else if (dateOrTime==="date"){
+      setDateTime((prev)=>({...prev, dateEnabled:!prev.dateEnabled}));
+    }
+    else{
+      return;
+    }
+  }
+  const toggleRepeat = () => {
+    setRepeat((prev)=>({...prev, enabled:!prev.enabled}));
   };
   const changeType = (t) => {
     if (t.toLowerCase() !== "goal" && t.toLowerCase() !== "reminder") {
@@ -29,12 +34,12 @@ const CreateTodoScreen = () => {
   const save = () => {
     if (!title.trim()) return;
     const id = Math.random().toString(36).substring(2, 9);
+    
     const goal = {
       id: id,
       title: title,
       description: description,
-      time: time.data,
-      date: date.data ? date.data : new Date(),
+      dateTime:"",
       repeat: repeat.data,
       type: type,
       completed:false
@@ -42,8 +47,7 @@ const CreateTodoScreen = () => {
     addGoal(goal);
     setTitle("");
     setDescription("");
-    setTime({ enabled: false, data: null });
-    setDate({ enabled: false, data: null });
+    setDateTime({timeEnabled:false, dateEnabled:false, year:null, month:null, day:null, hour:null, minutes:null, AMPM:""})
     setRepeat({ enabled: false, data: null });
     setType("goal");
   };
@@ -103,13 +107,12 @@ const CreateTodoScreen = () => {
         </View>
         <View style={styles.break} />
         <CreateTodoInputs
-          time={time}
-          setTime={setTime}
-          date={date}
-          setDate={setDate}
+          dateTime={dateTime}
+          setDateTime={setDateTime}
           repeat={repeat}
           setRepeat={setRepeat}
-          toggleOption={toggleOption}
+          toggleRepeat={toggleRepeat}
+          toggleDateTime={toggleDateTime}
           title={title}
           setTitle={setTitle}
           setDescription={setDescription}

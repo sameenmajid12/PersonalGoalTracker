@@ -29,6 +29,7 @@ const RepeatPicker = ({ repeat, setRepeat }) => {
     <View
       style={{
         marginTop: 10,
+        paddingTop:10,
         borderTopColor: "rgba(0,0,0,0.1)",
         borderTopWidth: 1,
       }}
