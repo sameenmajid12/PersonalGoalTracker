@@ -2,14 +2,13 @@ import { useState, useEffect, createContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format } from "date-fns";
 /*GoalModel={
-  id,
-  title,
-  date,
-  time,
-  repeat,
-  description,
-  type,
-  completed,
+  id:"8s9az1",
+  title:"Meditate",
+  datetime: {year: 2025,month:11, day:24, hours: 12, minutes: 55, AMPM:"AM"},
+  repeat:[sunday, tuesday, saturday],
+  description:"Meditate for 5 mins",
+  type:"goal",
+  completed:false,
 }*/
 
 export const GoalContext = createContext();
