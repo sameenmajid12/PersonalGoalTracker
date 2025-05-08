@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
 import colors from "../colors";
@@ -8,25 +8,33 @@ const CreateTodoScreen = () => {
   const [type, setType] = useState("goal");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [dateTime, setDateTime] = useState({timeEnabled:false, dateEnabled:false, year:null, month:null, day:null, hour:null, minutes:null, AMPM:""});
+  const today = new Date();
+  const [dateTime, setDateTime] = useState({
+    timeEnabled: false,
+    dateEnabled: false,
+    year: today.getFullYear(),
+    month: today.getMonth(),
+    day: today.getDate(),
+    hour: null,
+    minutes: null,
+    AMPM: "",
+  });
   const [repeat, setRepeat] = useState({ enabled: false, data: null });
   const { addGoal } = useContext(GoalContext);
-  const toggleDateTime=(dateOrTime)=>{
-    if(dateOrTime==="time"){
-      setDateTime((prev)=>({...prev, timeEnabled:!prev.timeEnabled}));
-    }
-    else if (dateOrTime==="date"){
-      setDateTime((prev)=>({...prev, dateEnabled:!prev.dateEnabled}));
-    }
-    else{
+  const toggleDateTime = (dateOrTime) => {
+    if (dateOrTime === "time") {
+      setDateTime((prev) => ({ ...prev, timeEnabled: !prev.timeEnabled }));
+    } else if (dateOrTime === "date") {
+      setDateTime((prev) => ({ ...prev, dateEnabled: !prev.dateEnabled }));
+    } else {
       return;
     }
-  }
+  };
   const toggleRepeat = () => {
-    setRepeat((prev)=>({...prev, enabled:!prev.enabled}));
+    setRepeat((prev) => ({ ...prev, enabled: !prev.enabled }));
   };
   const changeType = (t) => {
-    if (t.toLowerCase() !== "goal" && t.toLowerCase() !== "reminder") {
+    if (t !== "goal" && t !== "reminder") {
       return;
     }
     setType(t);
@@ -34,15 +42,31 @@ const CreateTodoScreen = () => {
   const save = () => {
     if (!title.trim()) return;
     const id = Math.random().toString(36).substring(2, 9);
-    
+    const formattedHour =
+      dateTime.AMPM === "AM"
+        ? dateTime.hour === 12
+          ? 0
+          : dateTime.hour
+        : dateTime.hour + 12;
+    console.log(dateTime);
     const goal = {
       id: id,
       title: title,
       description: description,
-      dateTime:"",
+      date: {
+        year: dateTime.year ?? today.getFullYear(),
+        month: dateTime.month ?? today.getMonth(),
+        day: dateTime.day ?? today.getDate(),
+      },
+      time: dateTime.timeEnabled
+        ? {
+            hour: formattedHour,
+            minutes: dateTime.minutes,
+          }
+        : null,
       repeat: repeat.data,
       type: type,
-      completed:false
+      completed: false,
     };
     addGoal(goal);
     setTitle("");
@@ -53,7 +77,7 @@ const CreateTodoScreen = () => {
   };
   return (
     <SafeAreaView style={styles.createScreen}>
-      <ScrollView  style={styles.scrollContainer}>
+      <ScrollView style={styles.scrollContainer}>
         <View style={styles.createHeaderContainer}>
           <Text style={styles.createHeader}>Create new</Text>
           <View style={styles.createButtonsContainer}>
@@ -132,9 +156,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     flex: 1,
   },
-  scrollContainer:{
-    flex:1,
-    padding:20,
+  scrollContainer: {
+    flex: 1,
+    padding: 20,
   },
   createHeaderContainer: {
     rowGap: 20,
@@ -156,7 +180,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   break: {
-    marginVertical:20,
+    marginVertical: 20,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(0,0,0,0.25)",
   },
@@ -171,7 +195,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.accent,
     borderRadius: 5,
-    marginTop:20
+    marginTop: 20,
   },
   saveButtonText: {
     color: "white",

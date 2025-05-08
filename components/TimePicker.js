@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import colors from "../colors";
 const TimePicker = ({ dateTime, setDateTime }) => {
+  useEffect(()=>{
+    setDateTime((prev)=>({...prev, hour:1, minutes:0, AMPM:"AM"}));
+  },[])
   return (
     <View style={styles.pickerContainer}>
       <Picker
         style={{ flex: 1 }}
         itemStyle={{ fontSize: 20 }}
-        selectedValue={dateTime.hours}
+        selectedValue={dateTime.hour}
         onValueChange={(ItemValue) =>
-          setDateTime((prev) => ({ ...prev, hours: ItemValue }))
+          setDateTime((prev) => ({ ...prev, hour: ItemValue }))
         }
       >
         <Picker.Item label="1" value={1}></Picker.Item>

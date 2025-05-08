@@ -17,10 +17,10 @@ const RepeatPicker = ({ repeat, setRepeat }) => {
   const toggleDay = (day) => {
     setRepeat((prev) => {
       const selected = prev.data ?? [];
-      if (selected.includes(day)) {
-        return { ...prev, data: selected.filter((d) => d !== day) };
+      if (selected.includes(days.indexOf(day))) {
+        return { ...prev, data: selected.filter((d) => d !== days.indexOf(day)) };
       } else {
-        return { ...prev, data: [...selected, day] };
+        return { ...prev, data: [...selected, days.indexOf(day)] };
       }
     });
   };
@@ -42,14 +42,14 @@ const RepeatPicker = ({ repeat, setRepeat }) => {
         >
           <Text
             style={{
-              color: repeat.data?.includes(day)
+              color: repeat.data?.includes(days.indexOf(day))
                 ? colors.text
                 : "rgba(0,0,0,0.35)",
             }}
           >
             {day}
           </Text>
-          {repeat.data?.includes(day) ? (
+          {repeat.data?.includes(days.indexOf(day)) ? (
             <FontAwesome  size={20} color={colors.secondary} marginRight={1} name="check-circle"></FontAwesome>
           ) : (
             <View style={styles.repeats} />
