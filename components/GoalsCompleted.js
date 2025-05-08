@@ -1,15 +1,21 @@
 import { View, Text, StyleSheet } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import colors from "../colors";
+import { useContext, useEffect, useState } from "react";
+import { GoalContext } from "../GoalContext";
 const GoalsCompleted=()=>{
-  
+  const {todaysGoals} = useContext(GoalContext);
+  const [numCompleted, setNumCompleted] = useState(todaysGoals.filter((goal)=>goal.completed===true).length);
+  useEffect(()=>{
+    setNumCompleted(todaysGoals.filter((goal)=>goal.completed===true).length);
+  },[todaysGoals])
   return(
     <View style={styles.goalsContainer}>
           <View style={styles.goalsText}>
             <Text style={styles.goalsTextHeader}>Today's goals</Text>
-            <Text style={styles.goalsTextSubheader}>5 out of 10 goals completed</Text>
+            <Text style={styles.goalsTextSubheader}>{`${numCompleted} out of ${todaysGoals.length} goals completed`}</Text>
           </View>
-          <AnimatedCircularProgress rotation={0} size={75} width={10} fill={(5/10)*100} tintColor="white" backgroundColor={colors.accent}/>
+          <AnimatedCircularProgress rotation={0} size={75} width={10} fill={(numCompleted/todaysGoals.length)*100} tintColor="white" backgroundColor={colors.accent}/>
       </View>
   )
 }
