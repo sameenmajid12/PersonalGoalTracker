@@ -1,11 +1,9 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, View, Text, Pressable, FlatList } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
 import colors from "../colors";
 import { FontAwesome6 } from "@expo/vector-icons";
 import GoalsCompleted from "../components/GoalsCompleted";
 import GoalList from "../components/GoalList";
-import { AnimatedCircularProgress } from "react-native-circular-progress";
-import DropDownPicker from "react-native-dropdown-picker";
 const HomeScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.homeScreen}>
