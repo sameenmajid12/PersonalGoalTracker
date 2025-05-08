@@ -3,21 +3,29 @@ import { useContext, useState } from "react";
 import { FontAwesome6 } from "@expo/vector-icons";
 import colors from "../colors";
 import { GoalContext } from "../GoalContext";
+import DateSelector from "./DateSelector";
+import { format } from "date-fns";
 const GoalList = () => {
-  const { todaysGoals: goals, updateGoal } = useContext(GoalContext);
-
+  const { todaysGoals: goals, updateGoal, selectedDay, setSelectedDay } = useContext(GoalContext);
+  const [showDateSelector, setShowDateSelector] = useState(false);
+  const [prevDateIndex, setPrevDateIndex] = useState(0);
+  const toggleDateSelector=()=>{
+    setShowDateSelector((prev)=>!prev);
+  }
   const toggleCompletion=async(goal)=>{
     const updatedGoal = {...goal,completed:!goal.completed};
     await updateGoal(updatedGoal);
   }
+  const today = new Date();
   return (
     <View>
       <View style={styles.headerContainer}>
         <Text style={styles.headerContainerLeft}>Your Goals & Reminders</Text>
-        <View style={styles.headerContainerRight}>
-          <Text style={styles.headerContainerRightText}>Today</Text>
+        <Pressable onPress={toggleDateSelector} style={styles.headerContainerRight}>
+          <Text style={styles.headerContainerRightText}>{today.getDate()===selectedDay.day?"Today":format(new Date(selectedDay.year, selectedDay.month, selectedDay.day), "MMMM dd, yyyy")}</Text>
           <FontAwesome6 name="chevron-down" color={colors.accent} size={15} />
-        </View>
+          {showDateSelector && <DateSelector prevIndex={prevDateIndex} setPrevIndex={setPrevDateIndex} toggleView={toggleDateSelector}/>}
+        </Pressable>
       </View>
       <FlatList
         style={styles.listContainer}
@@ -77,7 +85,7 @@ const GoalList = () => {
                       },
                     ]}
                   >
-                    {item.description}
+                    {item.description}{item.time!==null ? " - " + format(new Date(item.date.year, item.date.month, item.date.day, item.time.hour,item.time.minutes), "hh:mm") + item.time.AMPM:""}
                   </Text>
                 )}
               </View>
@@ -113,6 +121,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     columnGap: 5,
+    zIndex:200
   },
   headerContainerRightText: {
     fontSize: 14,
@@ -128,6 +137,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     columnGap: 15,
+    zIndex:100
   },
   listItemLeft: {
     height: "100%",
