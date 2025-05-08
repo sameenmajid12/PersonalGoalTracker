@@ -62,6 +62,7 @@ const CreateTodoScreen = () => {
         ? {
             hour: formattedHour,
             minutes: dateTime.minutes,
+            AMPM:dateTime.AMPM
           }
         : null,
       repeat: repeat.data,
