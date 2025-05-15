@@ -12,14 +12,46 @@ const GoalList = ({ toggleGoalDetail }) => {
     selectedDay,
     setSelectedDay,
   } = useContext(GoalContext);
+  console.log(selectedDay);
   const [showDateSelector, setShowDateSelector] = useState(false);
   const [prevDateIndex, setPrevDateIndex] = useState(0);
   const toggleDateSelector = () => {
     setShowDateSelector((prev) => !prev);
   };
   const toggleCompletion = async (goal) => {
-    const updatedGoal = { ...goal, completed: !goal.completed };
+    const alreadyCompleted = goal.completed.some(
+      (date) =>
+        date.day === selectedDay.day &&
+        date.month === selectedDay.month &&
+        date.year === selectedDay.year
+    );
+    let updatedGoal;
+    if (alreadyCompleted) {
+      updatedGoal = {
+        ...goal,
+        completed: goal.completed.filter(
+          (date) =>
+            date.day !== selectedDay.day &&
+            date.month !== selectedDay.month &&
+            date.year !== selectedDay.year
+        ),
+      };
+    } else {
+      updatedGoal = {
+        ...goal,
+        completed: [
+          ...goal.completed,
+          {
+            day: selectedDay.day,
+            month: selectedDay.month,
+            year: selectedDay.year,
+          },
+        ],
+      };
+    }
     await updateGoal(updatedGoal);
+
+    console.log(updatedGoal);
   };
   const today = new Date();
   return (
@@ -57,87 +89,95 @@ const GoalList = ({ toggleGoalDetail }) => {
         data={goals}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
-        renderItem={({ item }) => (
-          <View
-            style={[
-              styles.listItem,
-              {
-                borderColor: !item.completed
-                  ? "rgba(0,0,0,0.1)"
-                  : "rgba(0,0,0,0.05)",
-              },
-            ]}
-          >
-            <Pressable
-              onPress={() => toggleCompletion(item)}
-              style={styles.listItemLeft}
+        renderItem={({ item }) => {
+          const isCompleted = item.completed.some(
+            (date) =>
+              date.day === selectedDay.day &&
+              date.month === selectedDay.month &&
+              date.year === selectedDay.year
+          );
+          return (
+            <View
+              style={[
+                styles.listItem,
+                {
+                  borderColor: !isCompleted
+                    ? "rgba(0,0,0,0.1)"
+                    : "rgba(0,0,0,0.05)",
+                },
+              ]}
             >
-              {!item.completed ? (
-                <View style={styles.selector} />
-              ) : (
-                <View>
-                  <FontAwesome6
-                    name="circle-check"
-                    color={colors.secondaryText}
-                    size={20}
-                  />
-                </View>
-              )}
-            </Pressable>
-            <View style={styles.listItemRight}>
-              <View style={styles.text}>
-                <Text
-                  style={[
-                    styles.title,
-                    {
-                      color: !item.completed
-                        ? colors.text
-                        : colors.secondaryText,
-                    },
-                  ]}
-                >
-                  {item.title}
-                </Text>
-                {item.description && (
+              <Pressable
+                onPress={() => toggleCompletion(item)}
+                style={styles.listItemLeft}
+              >
+                {!isCompleted ? (
+                  <View style={styles.selector} />
+                ) : (
+                  <View>
+                    <FontAwesome6
+                      name="circle-check"
+                      color={colors.secondaryText}
+                      size={20}
+                    />
+                  </View>
+                )}
+              </Pressable>
+              <View style={styles.listItemRight}>
+                <View style={styles.text}>
                   <Text
-                    numberOfLines={1}
                     style={[
-                      styles.description,
+                      styles.title,
                       {
-                        color: !item.completed
-                          ? colors.secondaryText
-                          : "#ADD8B9",
+                        color: !isCompleted
+                          ? colors.text
+                          : colors.secondaryText,
                       },
                     ]}
                   >
-                    {item.description}
-                    {item.time !== null
-                      ? " - " +
-                        format(
-                          new Date(
-                            item.date.year,
-                            item.date.month,
-                            item.date.day,
-                            item.time.hour,
-                            item.time.minutes
-                          ),
-                          "hh:mm"
-                        ) +
-                        item.time.AMPM
-                      : ""}
+                    {item.title}
                   </Text>
-                )}
+                  {item.description && (
+                    <Text
+                      numberOfLines={1}
+                      style={[
+                        styles.description,
+                        {
+                          color: !isCompleted
+                            ? colors.secondaryText
+                            : "#ADD8B9",
+                        },
+                      ]}
+                    >
+                      {item.description}
+                      {item.time?.hour !== null || item.time?.minutes
+                        ? " - " +
+                          format(
+                            new Date(
+                              item.date.year,
+                              item.date.month,
+                              item.date.day,
+                              item.time.hour,
+                              item.time.minutes
+                            ),
+                            "hh:mm"
+                          ) +
+                          item.time.AMPM
+                        : ""}
+                    </Text>
+                  )}
+                </View>
+                <Pressable onPress={() => toggleGoalDetail(item)}>
+                  <FontAwesome6
+                    size={17.5}
+                    color={"rgba(0,0,0,0.5)"}
+                    name="ellipsis"
+                  ></FontAwesome6>
+                </Pressable>
               </View>
-              <Pressable onPress={()=>toggleGoalDetail(item)}>
-                <FontAwesome6
-                  size={17.5}
-                  color={"rgba(0,0,0,0.5)"}
-                  name="ellipsis"
-                ></FontAwesome6>
-              </Pressable>
             </View>
-          </View>
-        )}
+          );
+        }}
       />
     </View>
   );

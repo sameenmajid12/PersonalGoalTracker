@@ -8,7 +8,7 @@ import { format } from "date-fns";
   repeat:[sunday, tuesday, saturday],
   description:"Meditate for 5 mins",
   type:"goal",
-  completed:false,
+  completed:[{day:5, month:5, year:2025}],
 }*/
 
 export const GoalContext = createContext();

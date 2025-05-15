@@ -66,7 +66,7 @@ const CreateTodoScreen = ({navigation}) => {
         : null,
       repeat: repeat.data,
       type: type,
-      completed: false,
+      completed: [],
     };
     addGoal(goal);
     setTitle("");
