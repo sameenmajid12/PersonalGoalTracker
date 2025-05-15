@@ -4,7 +4,17 @@ import colors from "../colors";
 import { FontAwesome6 } from "@expo/vector-icons";
 import GoalsCompleted from "../components/GoalsCompleted";
 import GoalList from "../components/GoalList";
+import TodoDetailsModal from '../components/TodoDetailsModal';
+import { useState } from "react";
 const HomeScreen = ({navigation}) => {
+  const [goalDetail, setGoalDetail] = useState({goal:null, isVisibile:false});
+  const toggleGoalDetail = (goal) =>{
+    if(!goal){
+      setGoalDetail({goal:null, isVisibile:false});
+      return
+    }
+    setGoalDetail({goal:goal,isVisibile:true });
+  }
   return (
     <SafeAreaView style={styles.homeScreen}>
       <View style={styles.homeHeader}>
@@ -28,7 +38,8 @@ const HomeScreen = ({navigation}) => {
         </Pressable>
       </View>
       <GoalsCompleted/>
-      <GoalList/>
+      <GoalList toggleGoalDetail={toggleGoalDetail}/>
+      {goalDetail.isVisibile && <TodoDetailsModal toggleView={toggleGoalDetail} goal={goalDetail.goal}/>}
     </SafeAreaView>
   );
 };

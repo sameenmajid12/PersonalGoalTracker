@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
 import colors from "../colors";
 import CreateTodoInputs from "../components/CreateTodoInputs";
 import { GoalContext } from "../GoalContext";
-const CreateTodoScreen = () => {
+const CreateTodoScreen = ({navigation}) => {
   const [type, setType] = useState("goal");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -31,7 +31,7 @@ const CreateTodoScreen = () => {
     }
   };
   const toggleRepeat = () => {
-    setRepeat((prev) => ({ ...prev, enabled: !prev.enabled }));
+    setRepeat((prev) => ({ data:prev.data===null?[]:null, enabled: !prev.enabled }));
   };
   const changeType = (t) => {
     if (t !== "goal" && t !== "reminder") {
@@ -48,7 +48,6 @@ const CreateTodoScreen = () => {
           ? 0
           : dateTime.hour
         : dateTime.hour + 12;
-    console.log(dateTime);
     const goal = {
       id: id,
       title: title,
@@ -75,6 +74,7 @@ const CreateTodoScreen = () => {
     setDateTime({timeEnabled:false, dateEnabled:false, year:null, month:null, day:null, hour:null, minutes:null, AMPM:""})
     setRepeat({ enabled: false, data: null });
     setType("goal");
+    navigation.navigate("Home");
   };
   return (
     <SafeAreaView style={styles.createScreen}>
