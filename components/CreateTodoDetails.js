@@ -65,7 +65,7 @@ const CreateTodoDetails = ({
           />
         </View>
         {repeat.enabled && (
-          <RepeatPicker repeat={repeat} setRepeat={setRepeat} />
+          <RepeatPicker repeat={repeat.data} setRepeat={(repeat)=>setRepeat((prev)=>({...prev, data:repeat}))} />
         )}
       </View>
     </View>
