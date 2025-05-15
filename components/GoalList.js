@@ -5,26 +5,51 @@ import colors from "../colors";
 import { GoalContext } from "../GoalContext";
 import DateSelector from "./DateSelector";
 import { format } from "date-fns";
-const GoalList = () => {
-  const { todaysGoals: goals, updateGoal, selectedDay, setSelectedDay } = useContext(GoalContext);
+const GoalList = ({ toggleGoalDetail }) => {
+  const {
+    todaysGoals: goals,
+    updateGoal,
+    selectedDay,
+    setSelectedDay,
+  } = useContext(GoalContext);
   const [showDateSelector, setShowDateSelector] = useState(false);
   const [prevDateIndex, setPrevDateIndex] = useState(0);
-  const toggleDateSelector=()=>{
-    setShowDateSelector((prev)=>!prev);
-  }
-  const toggleCompletion=async(goal)=>{
-    const updatedGoal = {...goal,completed:!goal.completed};
+  const toggleDateSelector = () => {
+    setShowDateSelector((prev) => !prev);
+  };
+  const toggleCompletion = async (goal) => {
+    const updatedGoal = { ...goal, completed: !goal.completed };
     await updateGoal(updatedGoal);
-  }
+  };
   const today = new Date();
   return (
     <View>
       <View style={styles.headerContainer}>
         <Text style={styles.headerContainerLeft}>Your Goals & Reminders</Text>
-        <Pressable onPress={toggleDateSelector} style={styles.headerContainerRight}>
-          <Text style={styles.headerContainerRightText}>{today.getDate()===selectedDay.day?"Today":format(new Date(selectedDay.year, selectedDay.month, selectedDay.day), "MMMM dd, yyyy")}</Text>
+        <Pressable
+          onPress={toggleDateSelector}
+          style={styles.headerContainerRight}
+        >
+          <Text style={styles.headerContainerRightText}>
+            {today.getDate() === selectedDay.day
+              ? "Today"
+              : format(
+                  new Date(
+                    selectedDay.year,
+                    selectedDay.month,
+                    selectedDay.day
+                  ),
+                  "MMMM dd, yyyy"
+                )}
+          </Text>
           <FontAwesome6 name="chevron-down" color={colors.accent} size={15} />
-          {showDateSelector && <DateSelector prevIndex={prevDateIndex} setPrevIndex={setPrevDateIndex} toggleView={toggleDateSelector}/>}
+          {showDateSelector && (
+            <DateSelector
+              prevIndex={prevDateIndex}
+              setPrevIndex={setPrevDateIndex}
+              toggleView={toggleDateSelector}
+            />
+          )}
         </Pressable>
       </View>
       <FlatList
@@ -43,22 +68,22 @@ const GoalList = () => {
               },
             ]}
           >
-            <View style={styles.listItemLeft}>
+            <Pressable
+              onPress={() => toggleCompletion(item)}
+              style={styles.listItemLeft}
+            >
               {!item.completed ? (
-                <Pressable
-                  onPress={() => toggleCompletion(item)}
-                  style={styles.selector}
-                />
+                <View style={styles.selector} />
               ) : (
-                <Pressable onPress={() => toggleCompletion(item)}>
+                <View>
                   <FontAwesome6
                     name="circle-check"
                     color={colors.secondaryText}
                     size={20}
                   />
-                </Pressable>
+                </View>
               )}
-            </View>
+            </Pressable>
             <View style={styles.listItemRight}>
               <View style={styles.text}>
                 <Text
@@ -85,15 +110,31 @@ const GoalList = () => {
                       },
                     ]}
                   >
-                    {item.description}{item.time!==null ? " - " + format(new Date(item.date.year, item.date.month, item.date.day, item.time.hour,item.time.minutes), "hh:mm") + item.time.AMPM:""}
+                    {item.description}
+                    {item.time !== null
+                      ? " - " +
+                        format(
+                          new Date(
+                            item.date.year,
+                            item.date.month,
+                            item.date.day,
+                            item.time.hour,
+                            item.time.minutes
+                          ),
+                          "hh:mm"
+                        ) +
+                        item.time.AMPM
+                      : ""}
                   </Text>
                 )}
               </View>
-              <FontAwesome6
-                size={17.5}
-                color={"rgba(0,0,0,0.5)"}
-                name="ellipsis"
-              ></FontAwesome6>
+              <Pressable onPress={()=>toggleGoalDetail(item)}>
+                <FontAwesome6
+                  size={17.5}
+                  color={"rgba(0,0,0,0.5)"}
+                  name="ellipsis"
+                ></FontAwesome6>
+              </Pressable>
             </View>
           </View>
         )}
@@ -121,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     columnGap: 5,
-    zIndex:200
+    zIndex: 200,
   },
   headerContainerRightText: {
     fontSize: 14,
@@ -137,7 +178,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     columnGap: 15,
-    zIndex:100
+    zIndex: 100,
   },
   listItemLeft: {
     height: "100%",
