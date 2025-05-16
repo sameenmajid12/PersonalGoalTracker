@@ -9,7 +9,7 @@ const CreateTodoDetails = ({
   repeat,
   setRepeat,
   toggleDateTime,
-  toggleRepeat
+  toggleRepeat,type
 }) => {
   return (
     <View style={styles.createOptionsContainer}>
@@ -22,7 +22,7 @@ const CreateTodoDetails = ({
                 <View style={styles.createOptionTitle}>
         <Text style={styles.createOptionText}>Date</Text>
         <Switch
-          value={dateTime.dateEnabled}
+          value={dateTime.dateEnabled || type === "reminder"}
           onValueChange={() => toggleDateTime("date")}
           trackColor={{ true: colors.secondary }}
           style={{
@@ -41,7 +41,7 @@ const CreateTodoDetails = ({
         <View style={styles.createOptionTitle}>
           <Text style={styles.createOptionText}>Time</Text>
           <Switch
-            value={dateTime.timeEnabled}
+            value={dateTime.timeEnabled ||  type === "reminder"}
             onValueChange={() => toggleDateTime("time")}
             trackColor={{ true: colors.secondary }}
             style={{

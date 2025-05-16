@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
 import colors from "../colors";
 import CreateTodoInputs from "../components/CreateTodoInputs";
 import { GoalContext } from "../GoalContext";
-const CreateTodoScreen = ({navigation}) => {
+const CreateTodoScreen = ({ navigation }) => {
   const [type, setType] = useState("goal");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -21,8 +21,19 @@ const CreateTodoScreen = ({navigation}) => {
   });
   const [repeat, setRepeat] = useState({ enabled: false, data: null });
   const { addGoal } = useContext(GoalContext);
+  useEffect(() => {
+    if (type === "reminder") {
+      setDateTime((prev) => ({
+        ...prev,
+        timeEnabled: true,
+        dateEnabled: true,
+      }));
+    }
+  }, [type]);
   const toggleDateTime = (dateOrTime) => {
-    if (dateOrTime === "time") {
+    if (type === "reminder") {
+      return;
+    } else if (dateOrTime === "time") {
       setDateTime((prev) => ({ ...prev, timeEnabled: !prev.timeEnabled }));
     } else if (dateOrTime === "date") {
       setDateTime((prev) => ({ ...prev, dateEnabled: !prev.dateEnabled }));
@@ -31,7 +42,10 @@ const CreateTodoScreen = ({navigation}) => {
     }
   };
   const toggleRepeat = () => {
-    setRepeat((prev) => ({ data:prev.data===null?[]:null, enabled: !prev.enabled }));
+    setRepeat((prev) => ({
+      data: prev.data === null ? [] : null,
+      enabled: !prev.enabled,
+    }));
   };
   const changeType = (t) => {
     if (t !== "goal" && t !== "reminder") {
@@ -61,7 +75,7 @@ const CreateTodoScreen = ({navigation}) => {
         ? {
             hour: formattedHour,
             minutes: dateTime.minutes,
-            AMPM:dateTime.AMPM
+            AMPM: dateTime.AMPM,
           }
         : null,
       repeat: repeat.data,
@@ -71,7 +85,16 @@ const CreateTodoScreen = ({navigation}) => {
     addGoal(goal);
     setTitle("");
     setDescription("");
-    setDateTime({timeEnabled:false, dateEnabled:false, year:null, month:null, day:null, hour:null, minutes:null, AMPM:""})
+    setDateTime({
+      timeEnabled: false,
+      dateEnabled: false,
+      year: null,
+      month: null,
+      day: null,
+      hour: null,
+      minutes: null,
+      AMPM: "",
+    });
     setRepeat({ enabled: false, data: null });
     setType("goal");
     navigation.navigate("Home");
@@ -142,6 +165,7 @@ const CreateTodoScreen = ({navigation}) => {
           setTitle={setTitle}
           setDescription={setDescription}
           description={description}
+          type={type}
         />
         <View style={styles.saveButtonContainer}>
           <Pressable onPress={save} style={styles.saveButton}>

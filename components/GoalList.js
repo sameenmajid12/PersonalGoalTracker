@@ -12,7 +12,6 @@ const GoalList = ({ toggleGoalDetail }) => {
     selectedDay,
     setSelectedDay,
   } = useContext(GoalContext);
-  console.log(selectedDay);
   const [showDateSelector, setShowDateSelector] = useState(false);
   const [prevDateIndex, setPrevDateIndex] = useState(0);
   const toggleDateSelector = () => {
@@ -51,11 +50,10 @@ const GoalList = ({ toggleGoalDetail }) => {
     }
     await updateGoal(updatedGoal);
 
-    console.log(updatedGoal);
   };
   const today = new Date();
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View style={styles.headerContainer}>
         <Text style={styles.headerContainerLeft}>Your Goals & Reminders</Text>
         <Pressable
@@ -87,6 +85,7 @@ const GoalList = ({ toggleGoalDetail }) => {
       <FlatList
         style={styles.listContainer}
         data={goals}
+        showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
         renderItem={({ item }) => {
@@ -119,6 +118,8 @@ const GoalList = ({ toggleGoalDetail }) => {
                       name="circle-check"
                       color={colors.secondaryText}
                       size={20}
+                      paddingVertical={15}
+                      paddingLeft={15}
                     />
                   </View>
                 )}
@@ -139,7 +140,6 @@ const GoalList = ({ toggleGoalDetail }) => {
                   </Text>
                   {item.description && (
                     <Text
-                      numberOfLines={1}
                       style={[
                         styles.description,
                         {
@@ -215,7 +215,6 @@ const styles = StyleSheet.create({
     height: "auto",
     backgroundColor: colors.background,
     borderWidth: 1,
-    padding: 15,
     borderRadius: 10,
     columnGap: 15,
     zIndex: 100,
@@ -224,9 +223,12 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "flex-start",
   },
+
   selector: {
     width: 20,
     height: 20,
+    marginLeft: 15,
+    marginVertical: 15,
     borderColor: "rgba(0,0,0,0.2)",
     borderWidth: 1.5,
     borderRadius: 30,
@@ -236,9 +238,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingRight: 15,
   },
   text: {
     rowGap: 3,
+    paddingVertical: 15,
   },
   title: {
     fontWeight: 600,
@@ -246,6 +250,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontWeight: 400,
+    maxWidth: 300,
   },
 });
 export default GoalList;
