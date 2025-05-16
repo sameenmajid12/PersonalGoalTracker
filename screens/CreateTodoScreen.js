@@ -77,7 +77,11 @@ const CreateTodoScreen = ({ navigation }) => {
             minutes: dateTime.minutes,
             AMPM: dateTime.AMPM,
           }
-        : null,
+        : {
+          hour:null,
+          minutes:null,
+          AMPM:""
+        },
       repeat: repeat.data,
       type: type,
       completed: [],

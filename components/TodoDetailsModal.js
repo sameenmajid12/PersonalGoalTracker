@@ -27,8 +27,8 @@ const TodoDetailsModal = ({ toggleView, goal }) => {
     "Friday",
     "Saturday",
   ];
-
   const update = () => {
+    updateGoal(newGoal);
     toggleView();
   };
 
@@ -150,7 +150,7 @@ const TodoDetailsModal = ({ toggleView, goal }) => {
                 onValueChange={() => {
                   setNewGoal((prev) => ({
                     ...prev,
-                    time: prev.time?.hour || prev.time?.minutes
+                    time: (prev.time?.hour || prev.time?.minutes)
                       ? {hour:null, minutes:null, AMPM:""}
                       : { hour: 1, minutes: 0, AMPM: "AM" },
                   }));
@@ -160,8 +160,8 @@ const TodoDetailsModal = ({ toggleView, goal }) => {
             {(newGoal.time?.hour || newGoal.time?.minutes) && (
               <TimePicker
                 dateTime={newGoal.time}
-                setDateTime={(time) =>
-                  setNewGoal((prev) => ({ ...prev, time }))
+                setDateTime={(time) =>{
+                  setNewGoal((prev) => ({ ...prev, time }));}
                 }
               />
             )}
